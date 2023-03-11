@@ -1,7 +1,8 @@
+const ProductManager = require("./ProductManager.js")
 
+let producto1 = new ProductManager("./files/Productos.json");
 
 const prueba = async () => {
-	let producto1 = new ProductManager("./files/Productos.json");
 
 	await producto1.getProducts();
 
