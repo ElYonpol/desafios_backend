@@ -11,7 +11,7 @@ class ProductManager {
 				const products = await fs.promises.readFile(this.ruta, "utf-8");
 				return JSON.parse(products);
 			}
-			throw new Error("No hay productos");
+			throw new Error();
 		} catch (error) {
 			return [];
 		}
