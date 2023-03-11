@@ -33,11 +33,9 @@ class ProductManager {
 
 		const { title, description, price, thumbnail, code, stock } = newProduct;
 
-		if (products.length === 0) {
-			newProduct.id = 1;
-		} else {
-			newProduct.id = products[products.length - 1].id + 1;
-		}
+		products.length === 0
+			? (newProduct.id = 1)
+			: (newProduct.id = products[products.length - 1].id + 1);
 
 		let areFieldsMissing =
 			title.trim().length === 0 ||
