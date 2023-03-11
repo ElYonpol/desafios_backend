@@ -24,7 +24,6 @@ class ProductManager {
 
 		if (!productFound) return console.error("Product not found");
 
-		console.table(productFound);
 		return productFound;
 	};
 
