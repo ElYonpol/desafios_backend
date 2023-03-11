@@ -1,5 +1,5 @@
 const fs = require("fs");
-const path = "./files/Usuarios.json";
+const path = "./files/Productos.json";
 
 class ProductManager {
 	static products = [];
@@ -89,28 +89,46 @@ class ProductManager {
 	updateProduct = async (productToUpdate) => {
 		const products = await this.getProducts();
 
-		const productFound = products.find((product) => product.id === productToUpdate.id);
+		const productFoundIndex = products.findIndex(
+			(product) => product.id === productToUpdate.id
+		);
 
-		if (productFound) {
-			//Acá hay que actualizar el producto en el objeto products y grabarlo al archivo
-			await fs.promises.writeFile(this.ruta, JSON.stringify(products));
+		if (productFoundIndex > -1) {
+			updatedProduct = { ...products[productFoundIndex], productToUpdate };
+			console.log(updatedProduct);
+			return updatedProduct;
 		} else {
 			console.error("Product not found");
 		}
+
+		const updatedProduct = products[productFoundIndex].map((element) => {
+			if (productFoundIndex > -1) {
+				element = productToUpdate;
+				//Acá hay que actualizar el producto en el objeto products y grabarlo al archivo
+				//Ver https://linuxhint.com/update-object-in-javascript/#:~:text=To%20update%20an%20object%20in,updated%20value%20to%20an%20object.
+
+				return updatedProduct;
+			} else {
+				console.error("Product not found");
+			}
+		});
+		await fs.promises.writeFile(this.ruta, JSON.stringify(products));
 	};
 
 	deleteProduct = async (productToDeleteID) => {
 		const products = await this.getProducts();
 
-		const productFound = products.find((product) => product.id === productToDeleteID);
+		const productFoundIndex = products.findIndex(
+			(product) => product.id === productToDeleteID
+		);
 
-		if (productFound) {
-			//Acá hay que borrar el producto del objeto products y grabarlo al archivo
+		if (productFoundIndex > -1) {
+			products.splice(productFoundIndex, 1);
 			await fs.promises.writeFile(this.ruta, JSON.stringify(products));
 		} else {
 			console.error("Product not found");
 		}
-	}
+	};
 }
 
 let producto1 = new ProductManager();
