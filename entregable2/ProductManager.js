@@ -1,27 +1,17 @@
 const fs = require("fs");
-const path = "./files/Productos.json";
 
 class ProductManager {
-	static products = [];
-	constructor(id, title, description, price, thumbnail, code, stock, ruta) {
-		this.id = id;
-		this.title = title;
-		this.description = description;
-		this.price = price;
-		this.thumbnail = thumbnail;
-		this.code = code;
-		this.stock = stock;
-		this.ruta = path;
+	constructor(ruta) {
+		this.ruta = ruta;
 	}
 
 	getProducts = async () => {
 		try {
-			if (fs.existsSync(path)) {
+			if (fs.existsSync(this.ruta)) {
 				const products = await fs.promises.readFile(this.ruta, "utf-8");
 				return JSON.parse(products);
-			} else {
-				return [];
 			}
+			throw new Error("No hay productos");
 		} catch (error) {
 			return [];
 		}
@@ -32,18 +22,16 @@ class ProductManager {
 
 		const productFound = products.find((product) => product.id === id);
 
-		if (productFound) {
-			console.table(productFound);
-			return productFound;
-		} else {
-			console.error("Product not found");
-		}
+		if (!productFound) return console.error("Product not found");
+
+		console.table(productFound);
+		return productFound;
 	};
 
 	addProduct = async (newProduct) => {
 		const products = await this.getProducts();
 
-		const [title, description, price, thumbnail, code, stock] = newProduct;
+		const { title, description, price, thumbnail, code, stock } = newProduct;
 
 		if (products.length === 0) {
 			newProduct.id = 1;
@@ -51,7 +39,7 @@ class ProductManager {
 			newProduct.id = products[products.length - 1].id + 1;
 		}
 
-		let fieldsMissing =
+		let areFieldsMissing =
 			title.trim().length === 0 ||
 			description.trim().length === 0 ||
 			price === 0 ||
@@ -61,25 +49,13 @@ class ProductManager {
 
 		let productExists = products.find((product) => product.code === code);
 
-		if (fieldsMissing) {
+		if (areFieldsMissing) {
 			console.log("Debe completar todos los campos");
 		} else if (productExists) {
 			console.log("El código ingresado ya existe");
 		} else {
-			let newProduct = new ProductManager(
-				id,
-				title,
-				description,
-				price,
-				thumbnail,
-				code,
-				stock
-			);
-			ProductManager.products.push(newProduct);
-
-			console.log(newProduct);
-
 			products.push(newProduct);
+
 			await fs.promises.writeFile(this.ruta, JSON.stringify(products));
 
 			return newProduct;
@@ -87,75 +63,102 @@ class ProductManager {
 	};
 
 	updateProduct = async (productToUpdate) => {
+		const { id } = productToUpdate;
+		console.log(id);
 		const products = await this.getProducts();
 
 		const productFoundIndex = products.findIndex(
-			(product) => product.id === productToUpdate.id
+			(product) => product.id === id
 		);
+		if (productFoundIndex === -1) return console.error("Product not found");
 
-		if (productFoundIndex > -1) {
-			updatedProduct = { ...products[productFoundIndex], productToUpdate };
-			console.log(updatedProduct);
-			return updatedProduct;
-		} else {
-			console.error("Product not found");
-		}
+		products[productFoundIndex] = {
+			...products[productFoundIndex],
+			...productToUpdate,
+		};
+		console.log("El Producto actualizado es:", products[productFoundIndex]);
 
-		const updatedProduct = products[productFoundIndex].map((element) => {
-			if (productFoundIndex > -1) {
-				element = productToUpdate;
-				//Acá hay que actualizar el producto en el objeto products y grabarlo al archivo
-				//Ver https://linuxhint.com/update-object-in-javascript/#:~:text=To%20update%20an%20object%20in,updated%20value%20to%20an%20object.
-
-				return updatedProduct;
-			} else {
-				console.error("Product not found");
-			}
-		});
 		await fs.promises.writeFile(this.ruta, JSON.stringify(products));
 	};
 
-	deleteProduct = async (productToDeleteID) => {
+	deleteProduct = async (IdProductToDelete) => {
 		const products = await this.getProducts();
 
 		const productFoundIndex = products.findIndex(
-			(product) => product.id === productToDeleteID
+			(product) => product.id === IdProductToDelete
 		);
 
-		if (productFoundIndex > -1) {
-			products.splice(productFoundIndex, 1);
-			await fs.promises.writeFile(this.ruta, JSON.stringify(products));
-		} else {
-			console.error("Product not found");
-		}
+		if (productFoundIndex === -1) return console.error("Product not found");
+		console.log("El producto a eliminar es:", products[productFoundIndex]);
+		products.splice(productFoundIndex, 1);
+
+		await fs.promises.writeFile(this.ruta, JSON.stringify(products));
 	};
 }
 
-let producto1 = new ProductManager();
+const prueba = async () => {
+	let producto1 = new ProductManager("./files/Productos.json");
 
-producto1.getProducts();
+	await producto1.getProducts();
 
-producto1.addProduct(
-	"producto prueba",
-	"Este es un producto prueba",
-	200,
-	"Sin imagen",
-	"abc123",
-	25
-);
+	let pruebaProducto1 = {
+		title: "producto prueba",
+		description: "Este es un producto prueba",
+		price: 200,
+		thumbnail: "Sin imagen",
+		code: "abc123",
+		stock: 25,
+	};
 
-let producto2 = new ProductManager();
+	let pruebaProducto2 = {
+		title: "producto prueba 2",
+		description: "Este es un producto prueba 2",
+		price: 300,
+		thumbnail: "Sin imagen",
+		code: "abc124",
+		stock: 2,
+	};
 
-producto2.getProducts();
+	let pruebaProductoExiste = {
+		title: "producto prueba existe",
+		description: "Este es un producto que existe",
+		price: 400,
+		thumbnail: "Sin imagen",
+		code: "abc123",
+		stock: 5,
+	};
 
-producto2.addProduct(
-	"producto prueba 2",
-	"Descripción",
-	300,
-	"Sin imagen",
-	"def456",
-	10
-);
-producto2.getProducts();
-producto1.getProductByID(1);
-producto1.getProductByID(3);
+	let pruebaProductoUpdate = {
+		title: "producto prueba",
+		description: "Este es un producto que existe pero mejorado",
+		price: 400,
+		thumbnail: "Sin imagen",
+		code: "abc123",
+		stock: 534,
+	};
+
+	// await producto1.addProduct(pruebaProducto1);
+	// await producto1.getProducts();
+	// await producto1.getProductByID(1);
+
+	// await producto1.addProduct(pruebaProducto2);
+	// await producto1.getProducts();
+	// await producto1.getProductByID(2);
+	// await producto1.getProductByID(3);
+
+	//await producto1.addProduct(pruebaProductoExiste);
+
+	// await producto1.updateProduct({
+	// 	id: 1,
+	// 	title: "producto prueba",
+	// 	description: "Este es un producto que existe pero mejorado",
+	// 	price: 400,
+	// 	thumbnail: "Sin imagen",
+	// 	code: "abc123",
+	// 	stock: 534,
+	// });
+
+	// await producto1.deleteProduct(1)
+	// await producto1.deleteProduct(3)
+};
+prueba();
