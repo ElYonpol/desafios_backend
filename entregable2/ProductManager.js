@@ -9,6 +9,7 @@ class ProductManager {
 		try {
 			if (fs.existsSync(this.ruta)) {
 				const products = await fs.promises.readFile(this.ruta, "utf-8");
+				console.table(JSON.parse(products));
 				return JSON.parse(products);
 			}
 			throw new Error();
@@ -24,6 +25,8 @@ class ProductManager {
 
 		if (!productFound) return console.error("Product not found");
 
+		console.table(productFound);
+
 		return productFound;
 	};
 
@@ -37,14 +40,13 @@ class ProductManager {
 			: (newProduct.id = products[products.length - 1].id + 1);
 
 		let areFieldsMissing =
-			title.trim().length === 0 ||
-			description.trim().length === 0 ||
-			price === 0 ||
-			thumbnail.trim().length === 0 ||
-			code.trim().length === 0 ||
-			stock === 0;
+			!newProduct.title ||
+			!newProduct.description ||
+			!newProduct.price ||
+			!newProduct.thumbnail ||
+			!newProduct.code;
 
-		let productExists = products.find((product) => product.code === code);
+		let productExists = products.some((prod) => prod.code === newProduct.code);
 
 		if (areFieldsMissing) {
 			console.log("Debe completar todos los campos");
@@ -93,10 +95,12 @@ class ProductManager {
 	};
 }
 
-const prueba = async () => {
-	let producto1 = new ProductManager("./files/Productos.json");
+/* Código para pruebas */
 
-	await producto1.getProducts();
+/*const prueba = async () => {
+	let prodManager = new ProductManager("./files/Productos.json");
+
+	await prodManager.getProducts();
 
 	let pruebaProducto1 = {
 		title: "producto prueba",
@@ -134,28 +138,28 @@ const prueba = async () => {
 		stock: 534,
 	};
 
-	// await producto1.addProduct(pruebaProducto1);
-	// await producto1.getProducts();
-	// await producto1.getProductByID(1);
+	await prodManager.addProduct(pruebaProducto1);
+	await prodManager.getProducts();
+	await prodManager.getProductByID(1);
 
-	// await producto1.addProduct(pruebaProducto2);
-	// await producto1.getProducts();
-	// await producto1.getProductByID(2);
-	// await producto1.getProductByID(3);
+	await prodManager.addProduct(pruebaProducto2);
+	await prodManager.getProducts();
+	await prodManager.getProductByID(2);
+	await prodManager.getProductByID(3);
 
-	//await producto1.addProduct(pruebaProductoExiste);
+	await prodManager.addProduct(pruebaProductoExiste);
 
-	// await producto1.updateProduct({
-	// 	id: 1,
-	// 	title: "producto prueba",
-	// 	description: "Este es un producto que existe pero mejorado",
-	// 	price: 400,
-	// 	thumbnail: "Sin imagen",
-	// 	code: "abc123",
-	// 	stock: 534,
-	// });
+	await prodManager.updateProduct({
+		id: 1,
+		title: "producto prueba",
+		description: "Este es un producto que existe pero mejorado",
+		price: 400,
+		thumbnail: "Sin imagen",
+		code: "abc123",
+		stock: 534,
+	});
 
-	// await producto1.deleteProduct(1)
-	// await producto1.deleteProduct(3)
+	await prodManager.deleteProduct(1)
+	await prodManager.deleteProduct(3)
 };
-prueba();
+prueba(); */

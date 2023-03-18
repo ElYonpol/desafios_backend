@@ -1,10 +1,9 @@
-const ProductManager = require("./ProductManager.js")
+const ProductManager = require("./ProductManager.js");
 
-let producto1 = new ProductManager("./files/Productos.json");
+let prodManager = new ProductManager("./files/Productos.json");
 
 const prueba = async () => {
-
-	await producto1.getProducts();
+	await prodManager.getProducts();
 
 	let pruebaProducto1 = {
 		title: "producto prueba",
@@ -42,18 +41,18 @@ const prueba = async () => {
 		stock: 534,
 	};
 
-	await producto1.addProduct(pruebaProducto1);
-	await producto1.getProducts();
-	await producto1.getProductByID(1);
+	await prodManager.addProduct(new Product(pruebaProducto1));
+	await prodManager.getProducts();
+	await prodManager.getProductByID(1);
 
-	await producto1.addProduct(pruebaProducto2);
-	await producto1.getProducts();
-	await producto1.getProductByID(2);
-	await producto1.getProductByID(3);
+	await prodManager.addProduct(new Product(pruebaProducto2));
+	await prodManager.getProducts();
+	await prodManager.getProductByID(2);
+	await prodManager.getProductByID(3);
 
-	await producto1.addProduct(pruebaProductoExiste);
+	await prodManager.addProduct(new Product(pruebaProductoExiste));
 
-	await producto1.updateProduct({
+	await prodManager.updateProduct({
 		id: 1,
 		title: "producto prueba",
 		description: "Este es un producto que existe pero mejorado",
@@ -63,7 +62,7 @@ const prueba = async () => {
 		stock: 534,
 	});
 
-	await producto1.deleteProduct(1)
-	await producto1.deleteProduct(3)
+	await prodManager.deleteProduct(1);
+	await prodManager.deleteProduct(3);
 };
 prueba();

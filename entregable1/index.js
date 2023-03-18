@@ -1,7 +1,5 @@
-class ProductManager {
-	static products = [];
-	constructor(id, title, description, price, thumbnail, code, stock) {
-		this.id = id;
+class Product {
+	constructor(title, description, price, thumbnail, code, stock) {
 		this.title = title;
 		this.description = description;
 		this.price = price;
@@ -9,85 +7,88 @@ class ProductManager {
 		this.code = code;
 		this.stock = stock;
 	}
-	
-	addProduct(title, description, price, thumbnail, code, stock) {
-		let fieldsMissing =
-			title.trim().length === 0 ||
-			description.trim().length === 0 ||
-			price === 0 ||
-			thumbnail.trim().length === 0 ||
-			code.trim().length === 0 ||
-			stock === 0;
+}
 
-		let productExists = ProductManager.products.find(
-			(product) => product.code === code
+class ProductManager {
+	constructor() {
+		this.products = [];
+		this.lastId = 0;
+	}
+
+	addProduct(newProduct) {
+		let areFieldsMissing =
+			!newProduct.title ||
+			!newProduct.description ||
+			!newProduct.price ||
+			!newProduct.thumbnail ||
+			!newProduct.code;
+
+		let productExists = this.products.find(
+			(prod) => prod.code === newProduct.code
 		);
 
-		let id = 0;
-		if (ProductManager.products.length === 0) {
-			id = 1;
-		} else {
-			ProductManager.products.forEach((product) => {
-				let maxId = 0;
-				maxId = Math.max(maxId, product.id) ?? 0;
-				id = maxId + 1;
-				return id;
-			});
-		}
-
-		if (fieldsMissing) {
+		if (areFieldsMissing) {
 			console.log("Debe completar todos los campos");
 		} else if (productExists) {
 			console.log("El código ingresado ya existe");
 		} else {
-			let newProduct = new ProductManager(
-				id,
-				title,
-				description,
-				price,
-				thumbnail,
-				code,
-				stock
-			);
-			ProductManager.products.push(newProduct);
+			newProduct.id = ++this.lastId;
+			this.products.push(newProduct);
 		}
 	}
 
 	getProducts = () => {
-		console.table("Los productos son:",ProductManager.products);
-		return ProductManager.products;
+		console.table(this.products);
+		return this.products.length === 0 ? [] : this.products;
 	};
 
 	getProductByID = (id) => {
-		/* let productFound = []; */
-		const productFound = ProductManager.products.find((product) => product.id === id);
+		const productFound = this.products.find((product) => product.id === id);
 		if (productFound) {
 			console.table(productFound);
 			return productFound;
 		} else {
 			console.error("Product not found");
+			return null;
 		}
 	};
 }
 
-let producto1 = new ProductManager();
+const prodManager = new ProductManager();
 
-producto1.getProducts();
+prodManager.getProducts();
+try {
+	prodManager.addProduct(
+		new Product(
+			"producto prueba",
+			"Este es un producto prueba",
+			200,
+			"Sin imagen",
+			"abc123",
+			25
+		)
+	);
+} catch (error) {
+	console.error(error.message);
+}
 
-producto1.addProduct(
-	"producto prueba",
-	"Este es un producto prueba",
-	200,
-	"Sin imagen",
-	"abc123",
-	25
-);
+prodManager.getProducts();
+debugger;
+try {
+	prodManager.addProduct(
+		new Product(
+			"producto prueba 2",
+			"Descripción",
+			300,
+			"Sin imagen",
+			"def456",
+			10
+		)
+	);
+} catch (error) {
+	console.error(error.message);
+}
 
-let producto2 = new ProductManager();
-
-producto2.getProducts();
-
-producto2.addProduct("producto prueba 2", "Descripción", 300, "Sin imagen", "def456", 10);
-producto2.getProducts();
-producto1.getProductByID(1);
-producto1.getProductByID(3);
+prodManager.getProducts();
+prodManager.getProductByID(1);
+prodManager.getProductByID(3);
