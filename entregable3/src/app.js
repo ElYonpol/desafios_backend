@@ -11,17 +11,23 @@ const products = new ProductManager("./files/Productos.json");
 
 app.get("/products", async (req, res) => {
 	const productos = await products.getProducts();
-	res.send({ productos });
+	const limit = parseInt(req.query.limit);
+	if (!limit) return res.send({ productos });
+	const productsFiltered = productos.filter((product) => product.id <= limit);
+	res.send({ productsFiltered });
 });
 
 app.get("/products/:pid", async (req, res) => {
 	const productos = await products.getProducts();
-	const { pid } = req.params;
-	console.log(pid);
+	const productId = parseInt(req.params.pid);
+	console.log(productId);
 
-	const producto = productos.find((prod) => prod.id === pid);
+	const producto = productos.find((prod) => prod.id === productId);
 
-	if (!producto) return res.status(400).send("No se encontró el producto.");
+	if (!producto)
+		return res
+			.status(400)
+			.send({ status: "error", error: "No se encontró el producto" });
 
 	res.status(200).send({ producto });
 });
