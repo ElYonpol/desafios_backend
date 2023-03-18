@@ -9,7 +9,7 @@ class ProductManager {
 		try {
 			if (fs.existsSync(this.ruta)) {
 				const products = await fs.promises.readFile(this.ruta, "utf-8");
-				console.table(JSON.parse(products));
+				console.log(JSON.parse(products));
 				return JSON.parse(products);
 			}
 			throw new Error();
@@ -25,7 +25,7 @@ class ProductManager {
 
 		if (!productFound) return console.error("Product not found");
 
-		console.table(productFound);
+		console.log(productFound);
 
 		return productFound;
 	};
