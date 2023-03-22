@@ -6,13 +6,13 @@ const cartRouter = Router()
 const carts = []
 
 
-// GET http://localhost:xxxx /api/usuarios  /
+// GET http://localhost:xxxx /api/carts  /
 cartRouter.get('/', (req, res)=>{
     
     res.send('get de usuarios')
 })
 
-// POST http://localhost:xxxx /api/usuarios  /
+// POST http://localhost:xxxx /api/carts  /
 cartRouter.post('/', (req, res)=>{
     const {name, last_name, email, phone} = req.body
     users.push({ id:Date.now(), name, last_name,email, phone })
