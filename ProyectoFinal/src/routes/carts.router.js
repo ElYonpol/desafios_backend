@@ -1,7 +1,7 @@
 const express = require("express");
 const CartManager = require("../Daos/CartDaos/CartManager");
 
-const cartRouter = Router();
+const cartRouter = express.Router();
 
 const cartMgr = new CartManager("../files/carts.json");
 

@@ -1,7 +1,11 @@
 const express = require("express");
 const ProductManager = require("./Daos/ProductDaos/ProductManager.js");
 const productsRouter = require("./routes/products.router.js");
-const cartRouter = require("./routes/carts.router.js");
+const cartsRouter = require("./routes/carts.router.js");
+
+const app = express();
+const PORT = 8080;
+
 // handlebars config _______________________________________________________
 const handlebars = require("express-handlebars");
 
@@ -11,8 +15,6 @@ app.set("view engine", "handlebars");
 
 // handlebars config _______________________________________________________
 
-const app = express();
-const PORT = 8080;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/static", express.static(__dirname + "/public"));
 
 app.use("api/products/", productsRouter);
-app.use("api/carts/", cartRouter);
+app.use("api/carts/", cartsRouter);
 
 app.listen(PORT, (err) => {
 	if (err) {
