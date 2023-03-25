@@ -1,8 +1,8 @@
 const fs = require("fs");
 
 class ProductManager {
-	constructor(path) {
-		this.path = path;
+	constructor() {
+		this.path = "./src/files/products.json";
 	}
 
 	getProducts = async () => {
@@ -24,7 +24,7 @@ class ProductManager {
 
 		if (!productFound) return console.error("Product not found");
 
-		console.table(productFound);
+		console.log(productFound);
 
 		return productFound;
 	};
@@ -32,7 +32,8 @@ class ProductManager {
 	addProduct = async (newProduct) => {
 		const products = await this.getProducts();
 
-		const { title, description, price, thumbnail, code, stock } = newProduct;
+		const { title, description, code, price, status, stock, thumbnail } =
+			newProduct;
 
 		products.length === 0
 			? (newProduct.id = 1)
@@ -41,9 +42,10 @@ class ProductManager {
 		let areFieldsMissing =
 			!newProduct.title ||
 			!newProduct.description ||
+			!newProduct.code ||
 			!newProduct.price ||
-			!newProduct.thumbnail ||
-			!newProduct.code;
+			!newProduct.status ||
+			!newProduct.stock;
 
 		let productExists = products.some((prod) => prod.code === newProduct.code);
 
@@ -52,9 +54,13 @@ class ProductManager {
 		} else if (productExists) {
 			console.log("El código ingresado ya existe");
 		} else {
-			products.push(newProduct);
+			products.push({ id: newProduct.id, ...newProduct });
 
-			await fs.promises.writeFile(this.path, JSON.stringify(products));
+			await fs.promises.writeFile(
+				this.path,
+				JSON.stringify(products, null, 2),
+				"utf-8"
+			);
 
 			return newProduct;
 		}
@@ -76,7 +82,11 @@ class ProductManager {
 		};
 		console.log("El Producto actualizado es:", products[productFoundIndex]);
 
-		await fs.promises.writeFile(this.path, JSON.stringify(products));
+		await fs.promises.writeFile(
+			this.path,
+			JSON.stringify(products, null, 2),
+			"utf-8"
+		);
 	};
 
 	deleteProduct = async (IdProductToDelete) => {
@@ -90,7 +100,11 @@ class ProductManager {
 		console.log("El producto a eliminar es:", products[productFoundIndex]);
 		products.splice(productFoundIndex, 1);
 
-		await fs.promises.writeFile(this.path, JSON.stringify(products));
+		await fs.promises.writeFile(
+			this.path,
+			JSON.stringify(products, null, 2),
+			"utf-8"
+		);
 	};
 }
 

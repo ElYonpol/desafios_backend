@@ -46,12 +46,6 @@ class CartManager {
 				carts[cartFoundIndex].products[productFoundIndex].quantity += 1;
 			}
 
-			// carts[cartFoundIndex] = {
-			// 	...carts[cartFoundIndex],
-			// 	...cartToUpdate,
-			// };
-			// console.log("El carrito actualizado es:", carts[cartFoundIndex]);
-
 			await fs.promises.writeFile(
 				this.path,
 				JSON.stringify(carts, null, 2),
@@ -69,14 +63,17 @@ class CartManager {
 
 		carts.push({ id: newCart.id, ...newCart });
 
-		await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
+		await fs.promises.writeFile(
+			this.path,
+			JSON.stringify(carts, null, 2),
+			"utf-8"
+		);
 
 		return carts;
 	};
 
 	updateCart = async (cartToUpdate) => {
 		const { id } = cartToUpdate;
-		console.log(id);
 		const carts = await this.getCarts();
 
 		const cartFoundIndex = carts.findIndex((cart) => cart.id === id);
@@ -88,7 +85,11 @@ class CartManager {
 		};
 		console.log("El carrito actualizado es:", carts[cartFoundIndex]);
 
-		await fs.promises.writeFile(this.path, JSON.stringify(carts));
+		await fs.promises.writeFile(
+			this.path,
+			JSON.stringify(carts, null, 2),
+			"utf-8"
+		);
 	};
 
 	deleteCart = async (IdCartToDelete) => {
@@ -102,7 +103,11 @@ class CartManager {
 		console.log("El carrito a eliminar es:", carts[cartFoundIndex]);
 		carts.splice(cartFoundIndex, 1);
 
-		await fs.promises.writeFile(this.path, JSON.stringify(carts));
+		await fs.promises.writeFile(
+			this.path,
+			JSON.stringify(carts, null, 2),
+			"utf-8"
+		);
 	};
 }
 

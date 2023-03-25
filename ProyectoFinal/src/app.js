@@ -1,9 +1,7 @@
 const express = require("express");
 const ProductManager = require("./Daos/ProductDaos/ProductManager.js");
-
-const app = express();
-const PORT = 8080;
-
+const productsRouter = require("./routes/products.router.js");
+const cartRouter = require("./routes/carts.router.js");
 // handlebars config _______________________________________________________
 const handlebars = require("express-handlebars");
 
@@ -13,13 +11,16 @@ app.set("view engine", "handlebars");
 
 // handlebars config _______________________________________________________
 
+const app = express();
+const PORT = 8080;
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static(__dirname + "public"));
+app.use("/static", express.static(__dirname + "/public"));
 
-app.use("api/products")
-app.use("api/carts")
+app.use("api/products/", productsRouter);
+app.use("api/carts/", cartRouter);
 
 const products = new ProductManager("./files/products.json");
 
