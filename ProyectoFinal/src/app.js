@@ -15,7 +15,6 @@ app.set("view engine", "handlebars");
 
 // handlebars config _______________________________________________________
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

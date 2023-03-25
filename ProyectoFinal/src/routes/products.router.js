@@ -4,7 +4,7 @@ const ProductManager = require("../Daos/ProductDaos/ProductManager.js");
 
 const productsRouter = express.Router();
 
-const productMgr = new ProductManager("../files/products.json");
+const productMgr = new ProductManager("./files/products.json");
 
 // GET http://localhost:xxxx/api/products
 productsRouter.get("/", async (req, res) => {
