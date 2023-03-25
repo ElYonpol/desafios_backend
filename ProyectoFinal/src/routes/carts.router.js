@@ -1,28 +1,34 @@
-const { Router } = require('express')
+const express = require("express");
+const CartManager = require("../Daos/CartDaos/CartManager");
 
-const cartRouter = Router()
+const cartRouter = Router();
 
+const cartMgr = new CartManager("../files/carts.json");
 
-const carts = []
-
+// const carts = []
 
 // GET http://localhost:xxxx /api/carts  /
-cartRouter.get('/', (req, res)=>{
-    
-    res.send('get de usuarios')
-})
+cartRouter.get("/api/carts", async (req, res) => {
+	const resp = await cartMgr.getCarts();
+	res.send(resp);
+});
 
 // POST http://localhost:xxxx /api/carts  /
-cartRouter.post('/', (req, res)=>{
-    const {name, last_name, email, phone} = req.body
-    users.push({ id:Date.now(), name, last_name,email, phone })
-    return res.json({
-        status: 'success',
-        message: 'usuario agregado correctamente',
-        users
-    })
-})
+cartRouter.post("/", async (req, res) => {
+	const resp = await cartMgr.addCart({ productos: [] });
+	res.send(resp);
+});
 
-module.exports = { 
-    cartRouter
-}
+cartRouter.post("/:cid/products/:pid", async (req, res) => {
+	const { cid, pid } = req.params;
+	const resp = await cartMgr.addProductToCart(parseInt(cid), parseInt(pid));
+	res.send({ resp });
+});
+
+cartRouter.get("/:cid", async (req, res) => {
+	const { cid } = req.params;
+	const resp = await cartMgr.getCartByID(parseInt(cid));
+	res.send({ resp });
+});
+
+module.exports = cartRouter;

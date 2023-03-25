@@ -1,15 +1,29 @@
 const express = require("express");
-const ProductManager = require("./ProductManager.js");
+const ProductManager = require("./Daos/ProductDaos/ProductManager.js");
 
 const app = express();
 const PORT = 8080;
 
+// handlebars config _______________________________________________________
+const handlebars = require("express-handlebars");
+
+app.engine("handlebars", handlebars.engine());
+app.set("views", __dirname + "/views");
+app.set("view engine", "handlebars");
+
+// handlebars config _______________________________________________________
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const products = new ProductManager("./files/Productos.json");
+app.use(express.static(__dirname + "public"));
 
-app.get("/products", async (req, res) => {
+app.use("api/products")
+app.use("api/carts")
+
+const products = new ProductManager("./files/products.json");
+
+app.get("/api/products", async (req, res) => {
 	const productos = await products.getProducts();
 	const limit = parseInt(req.query.limit);
 	if (!limit) return res.send({ productos });
