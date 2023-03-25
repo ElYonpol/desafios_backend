@@ -1,5 +1,4 @@
 const express = require("express");
-const ProductManager = require("./Daos/ProductDaos/ProductManager.js");
 const productsRouter = require("./routes/products.router.js");
 const cartsRouter = require("./routes/carts.router.js");
 
@@ -20,8 +19,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/static", express.static(__dirname + "/public"));
 
-app.use("api/products/", productsRouter);
-app.use("api/carts/", cartsRouter);
+app.use("/api/products/", productsRouter);
+app.use("/api/carts/", cartsRouter);
 
 app.listen(PORT, (err) => {
 	if (err) {

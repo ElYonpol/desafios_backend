@@ -1,8 +1,8 @@
 const fs = require("fs");
 
 class ProductManager {
-	constructor() {
-		this.path = "./src/files/products.json";
+	constructor(path) {
+		this.path = path;
 	}
 
 	getProducts = async () => {
@@ -13,8 +13,20 @@ class ProductManager {
 			}
 			throw new Error();
 		} catch (error) {
-			return [];
+			return error;
 		}
+	};
+
+	validateFields = (newProduct) => {
+		let areFieldsMissing =
+			!newProduct.title ||
+			!newProduct.description ||
+			!newProduct.code ||
+			!newProduct.price ||
+			!newProduct.status ||
+			!newProduct.stock;
+
+		return areFieldsMissing;
 	};
 
 	getProductByID = async (id) => {
@@ -39,13 +51,7 @@ class ProductManager {
 			? (newProduct.id = 1)
 			: (newProduct.id = products[products.length - 1].id + 1);
 
-		let areFieldsMissing =
-			!newProduct.title ||
-			!newProduct.description ||
-			!newProduct.code ||
-			!newProduct.price ||
-			!newProduct.status ||
-			!newProduct.stock;
+		const areFieldsMissing = this.validateFields(newProduct);
 
 		let productExists = products.some((prod) => prod.code === newProduct.code);
 
@@ -68,7 +74,6 @@ class ProductManager {
 
 	updateProduct = async (productToUpdate) => {
 		const { id } = productToUpdate;
-		console.log(id);
 		const products = await this.getProducts();
 
 		const productFoundIndex = products.findIndex(
@@ -108,4 +113,6 @@ class ProductManager {
 	};
 }
 
-module.exports = ProductManager;
+const productMgr = new ProductManager("./src/files/products.json");
+
+module.exports = { ProductManager, productMgr };

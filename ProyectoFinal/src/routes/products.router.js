@@ -1,10 +1,8 @@
 const express = require("express");
-const { uploader } = require("../utils/multer");
-const ProductManager = require("../Daos/ProductDaos/ProductManager.js");
+// const { uploader } = require("../utils/multer");
+const { productMgr } = require("../Daos/ProductDaos/ProductManager.js");
 
 const productsRouter = express.Router();
-
-const productMgr = new ProductManager("./files/products.json");
 
 // GET http://localhost:xxxx/api/products
 productsRouter.get("/", async (req, res) => {
@@ -35,8 +33,9 @@ productsRouter.post("/", async (req, res) => {
 });
 
 productsRouter.put("/:pid", async (req, res) => {
-	const { pid } = req.params;
-	const resp = await productMgr.updateProduct(parseInt(pid));
+	const pid = parseInt(req.params.pid);
+	const productToUpdate = { ...req.body, id: pid };
+	const resp = await productMgr.updateProduct(productToUpdate);
 	res.send({ resp });
 });
 

@@ -1,9 +1,8 @@
 const express = require("express");
-const CartManager = require("../Daos/CartDaos/CartManager");
+const cartMgr = require("../Daos/CartDaos/CartManager.js");
 
 const cartRouter = express.Router();
 
-const cartMgr = new CartManager("../files/carts.json");
 
 // POST http://localhost:xxxx/api/carts
 cartRouter.post("/", async (req, res) => {

@@ -1,8 +1,8 @@
 const fs = require("fs");
 
 class CartManager {
-	constructor() {
-		this.path = "./src/files/carts.json";
+	constructor(path) {
+		this.path = path;
 	}
 
 	getCarts = async () => {
@@ -111,4 +111,6 @@ class CartManager {
 	};
 }
 
-module.exports = CartManager;
+const cartMgr = new CartManager("./src/files/carts.json");
+
+module.exports = { CartManager, cartMgr };
